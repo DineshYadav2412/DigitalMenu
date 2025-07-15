@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choudhary Sweets Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="welcome-overlay" id="welcome">
+  <h1>Welcome to Choudhary Sweets</h1>
+</div>
+
+<header>
+  <img src="logo.jpg" alt="नैवेद्य sweets logo" class="logo1"> <!-- Replace 'logo.jpg' with your GitHub hosted image filename -->
+  <h1>नैवेद्य sweets (Pure Veg)</h1>
+  <p><a href="tel:9767264628">📞 9767264628</a> | 
+  <a href="https://maps.google.com/?q=naivedya sweets sector-19 Kharghar 410210" target="_blank">📍 Sector-19, Kharghar - 410210</a></p>
+</header>
+
+<div class="whatsapp-button">
+  <a href="https://wa.me/919767264628?text=Hello%2C%20I%20want%20to%20order%20from%20your%20menu." target="_blank">📲 Order on WhatsApp</a>
+</div>
+
+<div class="container">
+
+  <h2>Opening Hours</h2>
+  <p>Mon - Sun: 8 AM – 10 PM</p>
+
+  <h2>Snacks Menu</h2>
+  <table>
+    <tr><td>Samosa</td><td>₹18</td></tr>
+    <tr><td>Wada Pav</td><td>₹15</td></tr>
+    <tr><td>Samosa Pav</td><td>₹20</td></tr>
+    <tr><td>Kachori</td><td>₹30</td></tr>
+    <!-- Add remaining items -->
+  </table>
+
+  <h2>Chaat Menu</h2>
+  <table>
+    <tr><td>Pani Puri</td><td>₹30</td></tr>
+    <tr><td>Sev Puri</td><td>₹40</td></tr>
+    <!-- Add remaining items -->
+  </table>
+
+  <h2>Tikka & Rolls Menu</h2>
+  <table>
+    <tr><th>Soya Chaap (Half/Full)</th><th>Price</th></tr>
+    <tr><td>Masala Chaap</td><td>110 / 210</td></tr>
+    <!-- Add remaining items -->
+  </table>
+
+  <h2>Triple Eight Veg Menu</h2>
+  <table>
+    <tr><th>Starters (Half/Full)</th><th>Price</th></tr>
+    <tr><td>Veg Manchurian / Veg Crispy</td><td>80 / 180</td></tr>
+    <!-- Add remaining items -->
+  </table>
+
+</div>
+
+
+<footer>
+  Thank you for visiting नैवेद्य sweets
+</footer>
+
+<button id="backToTop" title="Go to top">↑</button>
+
+<script>
+  // Hide welcome overlay after 3 seconds
+  setTimeout(() => {
+    document.getElementById('welcome').classList.add('hidden');
+  }, 500);
+
+  // Back to top button logic
+  const backToTop = document.getElementById("backToTop");
+  window.onscroll = function() {
+    backToTop.style.display = (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) ? "block" : "none";
+  };
+  backToTop.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
