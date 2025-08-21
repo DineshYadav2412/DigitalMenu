@@ -1,957 +1,487 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Naivedya Sweets Menu</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
-    <!-- Small CSS additions for quantity controls & cart -->
     <style>
-      /* quantity control styling — keeps with your palette (orange / maroon) */
-      .qty-cell {
-        width: 140px;
-        text-align: right;
-      }
-      .qty-controls {
-        display: inline-flex;
-        gap: 8px;
-        align-items: center;
-        border-radius: 6px;
-        background: linear-gradient(45deg, #fff3e0, #fff8f0);
-        padding: 4px 6px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      }
-      .qty-controls button {
-        background: #ff8c00;
-        color: #fff;
-        border: none;
-        width: 28px;
-        height: 28px;
-        border-radius: 4px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      .qty-controls button:active {
-        transform: translateY(1px);
-      }
-      .qty-controls span.qty {
-        min-width: 22px;
-        display: inline-block;
-        text-align: center;
-        font-weight: 600;
-      }
-      /* Cart summary box */
-      .cart-summary {
-        position: fixed;
-        right: 20px;
-        bottom: 90px;
-        width: 300px;
-        max-height: 60vh;
-        overflow: auto;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-        padding: 12px;
-        z-index: 2000;
-        font-size: 14px;
-      }
-      .cart-summary h3 {
-        margin: 0 0 8px 0;
-        color: #8b0000;
-      }
-      .cart-item {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 6px;
-      }
-      .place-order-btn {
-        display: inline-block;
-        background: #8b0000;
-        color: #fff;
-        padding: 10px 16px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 700;
-        margin-top: 8px;
-      }
-      .place-order-btn:hover {
-        background: #a30000;
-      }
-      @media (max-width: 700px) {
-        .cart-summary {
-          width: calc(100% - 40px);
-          right: 20px;
-          left: 20px;
-          bottom: 90px;
-        }
-      }
+      .qty-cell { width: 180px; text-align: right; }
+      .qty-controls { display: inline-flex; gap: 8px; align-items: center; border-radius: 6px; background: linear-gradient(45deg,#fff3e0,#fff8f0); padding:4px 6px; box-shadow:0 1px 2px rgba(0,0,0,0.05); }
+      .qty-controls button, .weight-controls button { background:#ff8c00; color:#fff; border:none; width:28px; height:28px; border-radius:4px; font-weight:700; cursor:pointer; }
+      .qty-controls button:active, .weight-controls button:active { transform: translateY(1px); }
+      .qty-controls span.qty { min-width:22px; display:inline-block; text-align:center; font-weight:600; }
+      .weight-controls input.grams-input { -moz-appearance:textfield; }
+      .weight-controls input::-webkit-outer-spin-button, .weight-controls input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+      .cart-summary { position: fixed; right: 20px; bottom: 90px; width: 320px; max-height:60vh; overflow:auto; background:#fff; border-radius:10px; box-shadow:0 6px 18px rgba(0,0,0,0.15); padding:12px; z-index:2000; font-size:14px; }
+      .cart-summary h3 { margin:0 0 8px 0; color:#8b0000; }
+      .cart-item { display:flex; justify-content:space-between; gap:8px; margin-bottom:6px; }
+      .place-order-btn { display:inline-block; background:#8b0000; color:#fff; padding:10px 16px; border-radius:6px; text-decoration:none; font-weight:700; margin-top:8px; }
+      .place-order-btn:hover { background:#a30000; }
+      @media (max-width:700px) { .cart-summary { width: calc(100% - 40px); right:20px; left:20px; bottom:90px; } .qty-cell { width:auto; } }
+      .row-subtotal { font-size:12px; color:#333; display:block; margin-top:4px; text-align:right; }
+      select.weight-select { padding:6px 8px; border-radius:6px; border:1px solid #ddd; }
+      table { width:100%; border-collapse:collapse; margin-bottom:16px; }
+      table td, table th { padding:6px 8px; vertical-align:middle; }
+      h2 { margin-top:20px; color:#8b0000; }
+      header { text-align:center; margin:14px 0; }
+      footer { text-align:center; margin:20px 0; color:#555; }
     </style>
   </head>
   <body>
-    <div class="welcome-overlay" id="welcome">
-      <h1>Welcome to Naivedya Sweets</h1>
-    </div>
+    <div class="welcome-overlay" id="welcome"><h1>Welcome to Naivedya Sweets</h1></div>
 
     <header>
-      <img src="Naivedya.jpg" alt="नैवेद्य sweets logo" class="logo1" />
+      <img src="Naivedya.jpg" alt="नैवेद्य sweets logo" class="logo1" style="max-width:120px;display:block;margin:0 auto" />
       <h1>नैवेद्य sweets (Pure Veg)</h1>
       <p>
         <a href="tel:8928454647">📞 89284546447</a> |
-        <a
-          href="https://maps.google.com/?q=naivedya sweets sector-19 Kharghar 410210"
-          target="_blank"
-          >📍 Sector-19, Kharghar - 410210</a
-        >
+        <a href="https://maps.google.com/?q=naivedya sweets sector-19 Kharghar 410210" target="_blank">📍 Sector-19, Kharghar - 410210</a>
       </p>
     </header>
 
-    <div
-      class="whatsapp-button"
-      style="
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        align-items: center;
-      "
-    >
-      <a
-        href="https://wa.me/919767264628?text=Hello%2C%20I%20want%20to%20order%20from%20your%20menu."
-        target="_blank"
-        >📲 Order on WhatsApp</a
-      >
-      <!-- Place Order (client-side, will open WhatsApp with cart) -->
-      <button
-        id="placeOrderButton"
-        class="place-order-btn"
-        title="Place order via WhatsApp"
-      >
-        Place Order
-      </button>
+    <div style="display:flex;gap:12px;justify-content:center;align-items:center;margin-bottom:12px">
+      <a href="https://wa.me/919767264628?text=Hello%2C%20I%20want%20to%20order%20from%20your%20menu." target="_blank">📲 Order on WhatsApp</a>
+      <button id="placeOrderButton" class="place-order-btn" title="Place order via WhatsApp">Place Order</button>
     </div>
 
     <div class="container" id="menuContainer">
-      <!-- (your big menu here) -->
-      <!-- IMPORTANT: rows are expected to have 2 <td> cells: item name and price -->
-      <!-- To keep the answer concise I'm including your original menu block unchanged, JS will add qty controls automatically. -->
-      <!-- Start of menu (paste your full menu here). For brevity I include same structure you provided. -->
       <h2>Opening Hours</h2>
       <p>Mon - Sun: 8 AM – 10 PM</p>
 
       <h2>SNACKS MENU</h2>
       <table>
-        <tr>
-          <td>Samosa</td>
-          <td>₹18</td>
-        </tr>
-        <tr>
-          <td>Wada Pav</td>
-          <td>₹18</td>
-        </tr>
-        <tr>
-          <td>Samosa Pav</td>
-          <td>₹20</td>
-        </tr>
-        <tr>
-          <td>Kachori</td>
-          <td>₹30</td>
-        </tr>
-        <tr>
-          <td>Kanda Bhajiya</td>
-          <td>₹300kg</td>
-        </tr>
-        <tr>
-          <td>Dhokla</td>
-          <td>₹300kg</td>
-        </tr>
-        <tr>
-          <td>Fafda</td>
-          <td>₹300kg</td>
-        </tr>
-        <tr>
-          <td>Jalebi(Ghee)</td>
-          <td>₹400kg</td>
-        </tr>
-        <tr>
-          <td>Khandvi</td>
-          <td>₹300kg</td>
-        </tr>
-        <tr>
-          <td>Aluwadi</td>
-          <td>₹300kg</td>
-        </tr>
+        <tr><td>Samosa</td><td>₹18</td></tr>
+        <tr><td>Wada Pav</td><td>₹18</td></tr>
+        <tr><td>Samosa Pav</td><td>₹20</td></tr>
+        <tr><td>Kachori</td><td>₹30</td></tr>
+        <tr><td>Kanda Bhajiya</td><td>₹300kg</td></tr>
+        <tr><td>Dhokla</td><td>₹300kg</td></tr>
+        <tr><td>Fafda</td><td>₹300kg</td></tr>
+        <tr><td>Jalebi (Ghee)</td><td>₹400kg</td></tr>
+        <tr><td>Khandvi</td><td>₹300kg</td></tr>
+        <tr><td>Aluwadi</td><td>₹300kg</td></tr>
       </table>
 
       <h2>CHAAT MENU</h2>
       <table>
-        <tr>
-          <td>Pani Puri</td>
-          <td>₹30</td>
-        </tr>
-        <tr>
-          <td>Sev Puri</td>
-          <td>₹40</td>
-        </tr>
-        <tr>
-          <td>Dahi Puri</td>
-          <td>₹50</td>
-        </tr>
-        <tr>
-          <td>Bhel</td>
-          <td>₹30</td>
-        </tr>
-        <tr>
-          <td>Papadi Chat</td>
-          <td>₹50</td>
-        </tr>
-        <tr>
-          <td>Dahi Bhel</td>
-          <td>₹40</td>
-        </tr>
-        <tr>
-          <td>Ragda Puri</td>
-          <td>₹45</td>
-        </tr>
-        <tr>
-          <td>Masala Puri</td>
-          <td>₹35</td>
-        </tr>
+        <tr><td>Pani Puri</td><td>₹30</td></tr>
+        <tr><td>Sev Puri</td><td>₹40</td></tr>
+        <tr><td>Dahi Puri</td><td>₹50</td></tr>
+        <tr><td>Bhel</td><td>₹30</td></tr>
+        <tr><td>Papadi Chat</td><td>₹50</td></tr>
+        <tr><td>Dahi Bhel</td><td>₹40</td></tr>
+        <tr><td>Ragda Puri</td><td>₹45</td></tr>
+        <tr><td>Masala Puri</td><td>₹35</td></tr>
       </table>
+
       <h2>VEG FRANKIE MENU</h2>
       <table>
-        <tr>
-          <td>Frankie</td>
-          <td>₹35</td>
-        </tr>
-        <tr>
-          <td>Cheese Frankie</td>
-          <td>₹60</td>
-        </tr>
-        <tr>
-          <td>Schezwan Frankie</td>
-          <td>₹40</td>
-        </tr>
-        <tr>
-          <td>Manuchurian Frankie</td>
-          <td>₹50</td>
-        </tr>
-        <tr>
-          <td>Manchurian Cheese Frankie</td>
-          <td>₹65</td>
-        </tr>
-        <tr>
-          <td>Paneer Frankie</td>
-          <td>₹70</td>
-        </tr>
-        <tr>
-          <td>Paneer Cheese Frankie</td>
-          <td>₹80</td>
-        </tr>
-        <tr>
-          <td>Mayannaise Frankie</td>
-          <td>₹50</td>
-        </tr>
-        <tr>
-          <td>Mayannaise Cheese Frankie</td>
-          <td>₹75</td>
-        </tr>
-        <tr>
-          <td>Noodles Frankie</td>
-          <td>₹50</td>
-        </tr>
-        <tr>
-          <td>Noodles Cheese Frankie</td>
-          <td>₹70</td>
-        </tr>
-        <tr>
-          <td>Paneer Manchurian Mayo Frankie</td>
-          <td>₹100</td>
-        </tr>
-        <tr>
-          <td>Paneer Mayannaise Frankie</td>
-          <td>₹75</td>
-        </tr>
-        <tr>
-          <td>Noodles Mayo Frankie</td>
-          <td>₹75</td>
-        </tr>
-        <tr>
-          <td>Noodles Mayo Cheese Frankie</td>
-          <td>₹75</td>
-        </tr>
-        <tr>
-          <td>Shezwan Mayo Frankie</td>
-          <td>₹55</td>
-        </tr>
-        <tr>
-          <td>Schezwan Mayo Cheese Frankie</td>
-          <td>₹80</td>
-        </tr>
-        <tr>
-          <td>Cocktail Frankie</td>
-          <td>₹100</td>
-        </tr>
+        <tr><td>Frankie</td><td>₹35</td></tr>
+        <tr><td>Cheese Frankie</td><td>₹60</td></tr>
+        <tr><td>Schezwan Frankie</td><td>₹40</td></tr>
+        <tr><td>Manchurian Frankie</td><td>₹50</td></tr>
+        <tr><td>Manchurian Cheese Frankie</td><td>₹65</td></tr>
+        <tr><td>Paneer Frankie</td><td>₹70</td></tr>
+        <tr><td>Paneer Cheese Frankie</td><td>₹80</td></tr>
+        <tr><td>Mayonnaise Frankie</td><td>₹50</td></tr>
+        <tr><td>Mayonnaise Cheese Frankie</td><td>₹75</td></tr>
+        <tr><td>Noodles Frankie</td><td>₹50</td></tr>
+        <tr><td>Noodles Cheese Frankie</td><td>₹70</td></tr>
+        <tr><td>Paneer Manchurian Mayo Frankie</td><td>₹100</td></tr>
+        <tr><td>Paneer Mayonnaise Frankie</td><td>₹75</td></tr>
+        <tr><td>Noodles Mayo Frankie</td><td>₹75</td></tr>
+        <tr><td>Noodles Mayo Cheese Frankie</td><td>₹75</td></tr>
+        <tr><td>Schezwan Mayo Frankie</td><td>₹55</td></tr>
+        <tr><td>Schezwan Mayo Cheese Frankie</td><td>₹80</td></tr>
+        <tr><td>Cocktail Frankie</td><td>₹100</td></tr>
       </table>
 
       <h2>CHINESE BHEL</h2>
       <table>
-        <tr>
-          <td>Manchurian</td>
-          <td>₹35</td>
-        </tr>
-        <tr>
-          <td>Chinese Bhel</td>
-          <td>₹25</td>
-        </tr>
-        <tr>
-          <td>Manchurian Bhel</td>
-          <td>₹40</td>
-        </tr>
-        <tr>
-          <td>Cheese Manchurian</td>
-          <td>₹30</td>
-        </tr>
-        <tr>
-          <td>Gravy Manchurian</td>
-          <td>₹35</td>
-        </tr>
-        <tr>
-          <td>Garam Bhel</td>
-          <td>₹30</td>
-        </tr>
+        <tr><td>Manchurian</td><td>₹35</td></tr>
+        <tr><td>Chinese Bhel</td><td>₹25</td></tr>
+        <tr><td>Manchurian Bhel</td><td>₹40</td></tr>
+        <tr><td>Cheese Manchurian</td><td>₹30</td></tr>
+        <tr><td>Gravy Manchurian</td><td>₹35</td></tr>
+        <tr><td>Garam Bhel</td><td>₹30</td></tr>
       </table>
 
-      <!-- ... (rest of your menu tables copied exactly) ... -->
-      <!-- For the full page use the full menu content you posted. The JS below will attach controls to each non-header row. -->
-
-      <!-- small example extra table to show half/full formats (JS handles parsing) -->
-      <h2>SOYA CHAAP</h2>
+      <h2>SOYA CHAAP (Half/Full)</h2>
       <table>
-        <tr>
-          <th>Soya Chaap (Half/Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Masala Chaap</td>
-          <td>110 / 210</td>
-        </tr>
-        <tr>
-          <td>Achari Chaap</td>
-          <td>110 / 210</td>
-        </tr>
-        <tr>
-          <td>Pudina chaap</td>
-          <td>110 / 210</td>
-        </tr>
-        <tr>
-          <td>Chatpata Chaap</td>
-          <td>110 / 210</td>
-        </tr>
-        <tr>
-          <td>Malal Chaap</td>
-          <td>120 / 230</td>
-        </tr>
-        <tr>
-          <td>Afgani Chaap</td>
-          <td>110 / 230</td>
-        </tr>
-        <tr>
-          <td>Garlic Chaap</td>
-          <td>110 / 230</td>
-        </tr>
-        <tr>
-          <td>Garlic Malal Chaap</td>
-          <td>110 / 230</td>
-        </tr>
-        <tr>
-          <td>Red Tikka</td>
-          <td>110 / 230</td>
-        </tr>
-        <tr>
-          <td>Red Malal Tikka</td>
-          <td>110 / 230</td>
-        </tr>
-        <tr>
-          <td>Stuff Chaap</td>
-          <td>110 / 230</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Masala Chaap</td><td>110 / 210</td></tr>
+        <tr><td>Achari Chaap</td><td>110 / 210</td></tr>
+        <tr><td>Pudina Chaap</td><td>110 / 210</td></tr>
+        <tr><td>Chatpata Chaap</td><td>110 / 210</td></tr>
+        <tr><td>Malal Chaap</td><td>120 / 230</td></tr>
+        <tr><td>Afgani Chaap</td><td>110 / 230</td></tr>
+        <tr><td>Garlic Chaap</td><td>110 / 230</td></tr>
+        <tr><td>Garlic Malal Chaap</td><td>110 / 230</td></tr>
+        <tr><td>Red Tikka</td><td>110 / 230</td></tr>
+        <tr><td>Red Malal Tikka</td><td>110 / 230</td></tr>
+        <tr><td>Stuff Chaap</td><td>110 / 230</td></tr>
       </table>
 
       <h2>FRANKIE & ROLLS</h2>
       <table>
-        <tr>
-          <th>FRANKIE ROLLS (Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Soya Masala Roll</td>
-          <td>140</td>
-        </tr>
-        <tr>
-          <td>Soya Achari Roll</td>
-          <td>140</td>
-        </tr>
-        <tr>
-          <td>Soya Pudina Roll</td>
-          <td>140</td>
-        </tr>
-        <tr>
-          <td>Soya Malal Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Soya Afgani Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Soya Irani Roll</td>
-          <td>150</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Soya Masala Roll</td><td>140</td></tr>
+        <tr><td>Soya Achari Roll</td><td>140</td></tr>
+        <tr><td>Soya Pudina Roll</td><td>140</td></tr>
+        <tr><td>Soya Malal Roll</td><td>150</td></tr>
+        <tr><td>Soya Afgani Roll</td><td>150</td></tr>
+        <tr><td>Soya Irani Roll</td><td>150</td></tr>
+        <tr><td>Paneer Masala Roll</td><td>150</td></tr>
+        <tr><td>Paneer Achari Roll</td><td>150</td></tr>
+        <tr><td>Paneer Pudina Roll</td><td>150</td></tr>
+        <tr><td>Paneer Malal Roll</td><td>150</td></tr>
+        <tr><td>Paneer Afgani Roll</td><td>150</td></tr>
+        <tr><td>Paneer Irani Roll</td><td>150</td></tr>
       </table>
 
-      <h2>PANEER TIKKA</h2>
+      <h2>PANEER TIKKA (Half/Full)</h2>
       <table>
-        <tr>
-          <th>PANEER TIKKA (Half/Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Paneer Masala Tikka</td>
-          <td>120/230</td>
-        </tr>
-        <tr>
-          <td>Paneer Achari Tikka</td>
-          <td>120/230</td>
-        </tr>
-        <tr>
-          <td>Paneer Pudina Tikka</td>
-          <td>120/230</td>
-        </tr>
-        <tr>
-          <td>Paneer Irani Tikka</td>
-          <td>130/250</td>
-        </tr>
-        <tr>
-          <td>Paneer Malal Tikka</td>
-          <td>130/250</td>
-        </tr>
-        <tr>
-          <td>Paneer Afgani Tikka</td>
-          <td>130/250</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Paneer Masala Tikka</td><td>120 / 230</td></tr>
+        <tr><td>Paneer Achari Tikka</td><td>120 / 230</td></tr>
+        <tr><td>Paneer Pudina Tikka</td><td>120 / 230</td></tr>
+        <tr><td>Paneer Irani Tikka</td><td>130 / 250</td></tr>
+        <tr><td>Paneer Malal Tikka</td><td>130 / 250</td></tr>
+        <tr><td>Paneer Afgani Tikka</td><td>130 / 250</td></tr>
       </table>
 
-      <h2>MUSHROOM TIKKA</h2>
+      <h2>MUSHROOM TIKKA (Half/Full)</h2>
       <table>
-        <tr>
-          <th>Mushroom Tikka (Half/Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Mushroom Masala Tikka</td>
-          <td>110/210</td>
-        </tr>
-        <tr>
-          <td>Mushroom Achari Tikka</td>
-          <td>110/210</td>
-        </tr>
-        <tr>
-          <td>Mushroom Pudina Tikka</td>
-          <td>110/210</td>
-        </tr>
-        <tr>
-          <td>Mushroom Irani Tikka</td>
-          <td>120/230</td>
-        </tr>
-        <tr>
-          <td>Mushroom Malal Tikka</td>
-          <td>120/230</td>
-        </tr>
-        <tr>
-          <td>Mushroom Afgani Tikka</td>
-          <td>120/230</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Mushroom Masala Tikka</td><td>110 / 210</td></tr>
+        <tr><td>Mushroom Achari Tikka</td><td>110 / 210</td></tr>
+        <tr><td>Mushroom Pudina Tikka</td><td>110 / 210</td></tr>
+        <tr><td>Mushroom Irani Tikka</td><td>120 / 230</td></tr>
+        <tr><td>Mushroom Malal Tikka</td><td>120 / 230</td></tr>
+        <tr><td>Mushroom Afgani Tikka</td><td>120 / 230</td></tr>
       </table>
 
       <h2>MIXED</h2>
       <table>
-        <tr>
-          <th>MIXED</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Mixed Masala</td>
-          <td>140</td>
-        </tr>
-        <tr>
-          <td>Mix Achari</td>
-          <td>140</td>
-        </tr>
-        <tr>
-          <td>Mix Pudina</td>
-          <td>140</td>
-        </tr>
-        <tr>
-          <td>Mix Malal</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Mix Afgani</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Mix Irani</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Paneer Masala Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Paneer Achari Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Paneer Pudina Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Paneer Malal Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Paneer Afgani Roll</td>
-          <td>150</td>
-        </tr>
-        <tr>
-          <td>Paneer Irani Roll</td>
-          <td>150</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Mixed Masala</td><td>140</td></tr>
+        <tr><td>Mix Achari</td><td>140</td></tr>
+        <tr><td>Mix Pudina</td><td>140</td></tr>
+        <tr><td>Mix Malal</td><td>150</td></tr>
+        <tr><td>Mix Afgani</td><td>150</td></tr>
+        <tr><td>Mix Irani</td><td>150</td></tr>
       </table>
 
-      <h2>TRIPLE EIGHT VEG MENU</h2>
+      <h2>TRIPLE EIGHT VEG MENU (Starters Half/Full)</h2>
       <table>
-        <tr>
-          <th>Starters (Half/Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Veg Manchurian / Veg Crispy</td>
-          <td>80/180</td>
-        </tr>
-        <tr>
-          <td>Veg 65 / Veg Lollipop</td>
-          <td>80/200</td>
-        </tr>
-        <tr>
-          <td>Rolls of the Hidden Mist Veg Spring Roll</td>
-          <td>80/200</td>
-        </tr>
-        <tr>
-          <td>Dragon Roll Veg Cigar Roll</td>
-          <td>90/180</td>
-        </tr>
-        <tr>
-          <td>Paneer Brunt Garlic</td>
-          <td>120/220</td>
-        </tr>
-        <tr>
-          <td>Shroom Samurai Mushroom Chilly</td>
-          <td>100/220</td>
-        </tr>
-        <tr>
-          <td>888 Anime Feast Special Starter</td>
-          <td>120/250</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Veg Manchurian / Veg Crispy</td><td>80 / 180</td></tr>
+        <tr><td>Veg 65 / Veg Lollipop</td><td>80 / 200</td></tr>
+        <tr><td>Rolls of the Hidden Mist Veg Spring Roll</td><td>80 / 200</td></tr>
+        <tr><td>Dragon Roll Veg Cigar Roll</td><td>90 / 180</td></tr>
+        <tr><td>Paneer Brunt Garlic</td><td>120 / 220</td></tr>
+        <tr><td>Shroom Samurai Mushroom Chilly</td><td>100 / 220</td></tr>
+        <tr><td>888 Anime Feast Special Starter</td><td>120 / 250</td></tr>
       </table>
 
       <h2>RICE & NOODLES</h2>
       <table>
-        <tr>
-          <th>Starters (Half/Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Kanoha Veg Fried Rice</td>
-          <td>90/180</td>
-        </tr>
-        <tr>
-          <td>Demon King's Veg Triple Fried Rice</td>
-          <td>100/200</td>
-        </tr>
-        <tr>
-          <td>Titan Warrior Veg Manchurian Rice</td>
-          <td>100/200</td>
-        </tr>
-        <tr>
-          <td>Hakka Phantom Veg Noodles</td>
-          <td>110/200</td>
-        </tr>
-        <tr>
-          <td>Noodle No Jutsu Veg Triple Noodles</td>
-          <td>120/210</td>
-        </tr>
-        <tr>
-          <td>Mushroom Spirit Fried Rice</td>
-          <td>120/220</td>
-        </tr>
-        <tr>
-          <td>Dragon Slayer Paneer Fried Rice / Peri Peri</td>
-          <td>120/220</td>
-        </tr>
-        <tr>
-          <td>Shonen Protagonist Veg Special Combo</td>
-          <td>140/250</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Kanoha Veg Fried Rice</td><td>90 / 180</td></tr>
+        <tr><td>Demon King's Veg Triple Fried Rice</td><td>100 / 200</td></tr>
+        <tr><td>Titan Warrior Veg Manchurian Rice</td><td>100 / 200</td></tr>
+        <tr><td>Hakka Phantom Veg Noodles</td><td>110 / 200</td></tr>
+        <tr><td>Noodle No Jutsu Veg Triple Noodles</td><td>120 / 210</td></tr>
+        <tr><td>Mushroom Spirit Fried Rice</td><td>120 / 220</td></tr>
+        <tr><td>Dragon Slayer Paneer Fried Rice / Peri Peri</td><td>120 / 220</td></tr>
+        <tr><td>Shonen Protagonist Veg Special Combo</td><td>140 / 250</td></tr>
       </table>
 
       <h2>MAGGI SPECIALS</h2>
       <table>
-        <tr>
-          <th>Starters (Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Plain Maggie</td>
-          <td>70</td>
-        </tr>
-        <tr>
-          <td>Kawaii Cheese Maggi</td>
-          <td>110</td>
-        </tr>
-        <tr>
-          <td>Chidori Peri Peri Maggi</td>
-          <td>130</td>
-        </tr>
-        <tr>
-          <td>Hidden Leaf Village Vegetable Maggi</td>
-          <td>90</td>
-        </tr>
-        <tr>
-          <td>Simple Shonen Maggi</td>
-          <td>70</td>
-        </tr>
+        <tr><th>Item</th><th>Price</th></tr>
+        <tr><td>Plain Maggie</td><td>70</td></tr>
+        <tr><td>Kawaii Cheese Maggi</td><td>110</td></tr>
+        <tr><td>Chidori Peri Peri Maggi</td><td>130</td></tr>
+        <tr><td>Hidden Leaf Village Vegetable Maggi</td><td>90</td></tr>
+        <tr><td>Simple Shonen Maggi</td><td>70</td></tr>
       </table>
 
       <h2>SOUP</h2>
       <table>
-        <tr>
-          <th>Starters (Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Hidden Leaf Veg Manchow Soup</td>
-          <td>50</td>
-        </tr>
-        <tr>
-          <td>Inferno Hot N Sour Soup</td>
-          <td>50</td>
-        </tr>
-        <tr>
-          <td>Zaro's Clear Veg Soup</td>
-          <td>40</td>
-        </tr>
-        <tr>
-          <td>Com Harmony Sweet Corn Soup</td>
-          <td>60</td>
-        </tr>
+        <tr><td>Hidden Leaf Veg Manchow Soup</td><td>50</td></tr>
+        <tr><td>Inferno Hot N Sour Soup</td><td>50</td></tr>
+        <tr><td>Zaro's Clear Veg Soup</td><td>40</td></tr>
+        <tr><td>Com Harmony Sweet Corn Soup</td><td>60</td></tr>
       </table>
 
       <h2>MOMOS</h2>
       <table>
-        <tr>
-          <th>Starters (Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Momo Kage Veg Momos</td>
-          <td>70</td>
-        </tr>
-        <tr>
-          <td>Akatsuki Fire Veg Peri Peri Momos</td>
-          <td>80</td>
-        </tr>
-        <tr>
-          <td>Paneer Spiri Veg Momos</td>
-          <td>90</td>
-        </tr>
-        <tr>
-          <td>Legendary Ninja Special Veg Momos</td>
-          <td>110</td>
-        </tr>
+        <tr><td>Momo Kage Veg Momos</td><td>70</td></tr>
+        <tr><td>Akatsuki Fire Veg Peri Peri Momos</td><td>80</td></tr>
+        <tr><td>Paneer Spiri Veg Momos</td><td>90</td></tr>
+        <tr><td>Legendary Ninja Special Veg Momos</td><td>110</td></tr>
       </table>
 
       <h2>ADD ONS</h2>
       <table>
-        <tr>
-          <th>Starters (Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>Cheese</td>
-          <td>20</td>
-        </tr>
-        <tr>
-          <td>Golden Chibi Butter</td>
-          <td>15</td>
-        </tr>
-        <tr>
-          <td>Peri Peri Chakra Add-On</td>
-          <td>10</td>
-        </tr>
+        <tr><td>Cheese</td><td>20</td></tr>
+        <tr><td>Golden Chibi Butter</td><td>15</td></tr>
+        <tr><td>Peri Peri Chakra Add-On</td><td>10</td></tr>
       </table>
 
       <h2>FRIES</h2>
       <table>
-        <tr>
-          <th>Starters (Full)</th>
-          <th>Price</th>
-        </tr>
-        <tr>
-          <td>All Might's French Fries</td>
-          <td>80</td>
-        </tr>
-        <tr>
-          <td>Peri Peri Jutsu Fries</td>
-          <td>90</td>
-        </tr>
-        <tr>
-          <td>Veg Burger</td>
-          <td>130</td>
-        </tr>
-        <tr>
-          <td>Potato Shots</td>
-          <td>120</td>
-        </tr>
-        <tr>
-          <td>Pizza Finger</td>
-          <td>140</td>
-        </tr>
+        <tr><td>All Might's French Fries</td><td>80</td></tr>
+        <tr><td>Peri Peri Jutsu Fries</td><td>90</td></tr>
+        <tr><td>Veg Burger</td><td>130</td></tr>
+        <tr><td>Potato Shots</td><td>120</td></tr>
+        <tr><td>Pizza Finger</td><td>140</td></tr>
       </table>
-      <!-- Add the remainder of your tables here in same structure -->
+
+      <h2>SWEETS & DESSERTS</h2>
+      <table>
+        <tr><td>Gulab Jamun (per piece)</td><td>₹25</td></tr>
+        <tr><td>Rasgulla (per piece)</td><td>₹25</td></tr>
+        <tr><td>Kaju Katli (per 100g)</td><td>₹120kg</td></tr>
+        <tr><td>Besan Ladoo (per 100g)</td><td>₹80kg</td></tr>
+        <tr><td>Milk Cake (per 100g)</td><td>₹90kg</td></tr>
+      </table>
+
+      <h2>BEVERAGES</h2>
+      <table>
+        <tr><td>Masala Chai</td><td>₹20</td></tr>
+        <tr><td>Badam Milk (200ml)</td><td>₹60</td></tr>
+        <tr><td>Cold Drink (Can)</td><td>₹40</td></tr>
+        <tr><td>Fresh Lime Soda</td><td>₹35</td></tr>
+      </table>
+
+      <!-- If you have more sections, add them in same structure -->
     </div>
 
     <footer>Thank you for visiting नैवेद्य sweets</footer>
 
-    <button id="backToTop" title="Go to top">↑</button>
+    <button id="backToTop" title="Go to top" style="position:fixed;right:20px;bottom:20px;padding:10px;border-radius:6px">↑</button>
 
-    <!-- Cart summary box -->
-    <div
-      class="cart-summary"
-      id="cartSummary"
-      aria-live="polite"
-      style="display: none"
-    >
+    <div class="cart-summary" id="cartSummary" aria-live="polite" style="display:none">
       <h3>Cart</h3>
       <div id="cartItems"></div>
       <hr />
-      <div
-        style="display: flex; justify-content: space-between; font-weight: 700"
-      >
-        <div>Total</div>
-        <div id="cartTotal">₹0</div>
-      </div>
-      <a
-        id="placeOrderMobile"
-        class="place-order-btn"
-        style="display: block; margin-top: 8px; text-align: center"
-        >Place Order via WhatsApp</a
-      >
+      <div style="display:flex;justify-content:space-between;font-weight:700"><div>Total</div><div id="cartTotal">₹0</div></div>
+      <a id="placeOrderMobile" class="place-order-btn" style="display:block;margin-top:8px;text-align:center">Place Order via WhatsApp</a>
     </div>
 
     <script>
-      // Hide welcome overlay after 500ms
-      setTimeout(() => {
-        document.getElementById("welcome").classList.add("hidden");
-      }, 500);
+      // hide welcome quickly
+      setTimeout(()=>{const w=document.getElementById("welcome"); if(w) w.classList.add("hidden");},500);
 
-      // Back to top button logic
       const backToTop = document.getElementById("backToTop");
-      window.onscroll = function () {
-        backToTop.style.display =
-          document.body.scrollTop > 100 ||
-          document.documentElement.scrollTop > 100
-            ? "block"
-            : "none";
-      };
-      backToTop.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
+      window.onscroll = function(){ if(!backToTop) return; backToTop.style.display = document.body.scrollTop>100 || document.documentElement.scrollTop>100 ? "block":"none"; };
+      if(backToTop) backToTop.addEventListener("click", ()=>window.scrollTo({top:0,behavior:"smooth"}));
 
-      /***** ORDER / CART SCRIPT *****/
-      (function () {
-        // use the WhatsApp number already present in your page
-        const WA_NUMBER = "918928454647"; // change if you want a different number
+      (function(){
+        const WA_NUMBER = "918928454647";
 
-        function parsePrice(text) {
-          if (!text) return 0;
-          // find all numbers with optional decimal
-          const matches = text.replace(/,/g, "").match(/(\d+(\.\d+)?)/g);
-          if (!matches) return 0;
-          // choose the largest number found (useful for "110 / 210" => 210)
-          const nums = matches.map((n) => parseFloat(n));
-          return Math.max(...nums);
-        }
+        function parseNumbers(text){ if(!text) return []; return (text.replace(/,/g,"").match(/(\d+(\.\d+)?)/g)||[]).map(Number); }
+        function formatINR(num){ return "₹"+Math.round(num).toFixed(0); }
+        function parseHalfFullPrices(text){ const m=text.match(/(\d+(\.\d+)?)\s*\/\s*(\d+(\.\d+)?)/); if(!m) return null; return { half: parseFloat(m[1]), full: parseFloat(m[3]) }; }
+        function parsePricePerKg(text){ if(!/kg/i.test(text)) return null; const m=text.match(/(\d+(\.\d+)?)\s*(?=kg)/i); if(m) return parseFloat(m[1]); const nums=parseNumbers(text); return nums.length?Math.max(...nums):null; }
 
-        function formatINR(num) {
-          // simple formatting
-          return "₹" + Number(num).toFixed(0);
-        }
-
-        // attach qty controls to each table row with 2 <td> cells (skip header rows)
         const tables = document.querySelectorAll(".container table");
-        tables.forEach((table) => {
-          const rows = Array.from(table.rows);
-          rows.forEach((row) => {
-            // skip header rows (th) or rows with <th>
-            if (row.querySelector("th")) return;
+        tables.forEach(table=>{
+          Array.from(table.rows).forEach(row=>{
+            if(row.querySelector("th")) return;
             const cells = row.querySelectorAll("td");
-            if (cells.length < 2) return;
+            if(cells.length<2) return;
             const nameCell = cells[0];
             const priceCell = cells[1];
-            // ensure there's a price parsed on this row; if not, we still add controls with price 0
-            const priceValue = parsePrice(priceCell.textContent);
-            // add a data-price attribute so scripts / future changes can rely on it
-            row.dataset.price = priceValue;
-            // create qty cell if not already present
-            if (cells.length === 2) {
-              const qtyCell = row.insertCell(-1);
-              qtyCell.className = "qty-cell";
-              qtyCell.innerHTML = `
-                <div class="qty-controls" role="group" aria-label="Quantity controls">
-                  <button type="button" aria-label="decrease">−</button>
-                  <span class="qty" aria-live="polite">0</span>
-                  <button type="button" aria-label="increase">+</button>
+            const priceText = priceCell.textContent.trim();
+
+            const hf = parseHalfFullPrices(priceText);
+            const pricePerKg = parsePricePerKg(priceText);
+            const fallbackNum = parseNumbers(priceText)[0] || 0;
+            row.dataset.price = hf ? hf.full : pricePerKg ? pricePerKg : fallbackNum;
+
+            if(cells.length>=3) return;
+            const ctrlCell = row.insertCell(-1);
+            ctrlCell.className = "qty-cell";
+
+            if(hf){
+              ctrlCell.innerHTML = `
+                <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end">
+                  <div class="qty-controls" role="group" aria-label="Quantity controls">
+                    <button type="button" aria-label="decrease">−</button>
+                    <span class="qty" aria-live="polite">0</span>
+                    <button type="button" aria-label="increase">+</button>
+                  </div>
+                  <select class="hf-select" title="Choose Half or Full" aria-label="Half or Full">
+                    <option value="full">Full (₹${Math.round(hf.full)})</option>
+                    <option value="half">Half (₹${Math.round(hf.half)})</option>
+                  </select>
                 </div>
+                <span class="row-subtotal" aria-hidden="true"></span>
               `;
-              // wire up buttons
-              const dec = qtyCell.querySelector(
-                'button[aria-label="decrease"]'
-              );
-              const inc = qtyCell.querySelector(
-                'button[aria-label="increase"]'
-              );
-              const qtySpan = qtyCell.querySelector(".qty");
-              dec.addEventListener("click", () => {
-                const q = Math.max(0, parseInt(qtySpan.textContent) - 1);
-                qtySpan.textContent = q;
-                updateCart();
-              });
-              inc.addEventListener("click", () => {
-                const q = Math.max(0, parseInt(qtySpan.textContent) + 1);
-                qtySpan.textContent = q;
-                updateCart();
-              });
+              const dec = ctrlCell.querySelector('button[aria-label="decrease"]');
+              const inc = ctrlCell.querySelector('button[aria-label="increase"]');
+              const qtySpan = ctrlCell.querySelector(".qty");
+              const hfSelect = ctrlCell.querySelector(".hf-select");
+              const subtotalSpan = ctrlCell.querySelector(".row-subtotal");
+
+              row.dataset.halfPrice = hf.half;
+              row.dataset.fullPrice = hf.full;
+              row.dataset.price = hf.full;
+
+              function updateRowSubtotalHF(){ const qty = parseInt(qtySpan.textContent)||0; const price = parseFloat(row.dataset.price||0); subtotalSpan.textContent = qty>0 ? `Subtotal: ${formatINR(qty*price)}` : ""; }
+
+              dec.addEventListener("click", ()=>{ const q=Math.max(0,parseInt(qtySpan.textContent)-1); qtySpan.textContent=q; updateRowSubtotalHF(); updateCart(); });
+              inc.addEventListener("click", ()=>{ const q=Math.max(0,parseInt(qtySpan.textContent)+1); qtySpan.textContent=q; updateRowSubtotalHF(); updateCart(); });
+              hfSelect.addEventListener("change",(e)=>{ const sel=e.target.value; row.dataset.price = sel==="half" ? row.dataset.halfPrice : row.dataset.fullPrice; updateRowSubtotalHF(); updateCart(); });
+            } else if(pricePerKg){
+              // weight selector null placeholder
+              ctrlCell.innerHTML = `
+                <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end">
+                  <select class="weight-select" aria-label="Select weight">
+                    <option value="" selected>Select weight</option>
+                    <option value="100">100 g</option>
+                    <option value="200">200 g</option>
+                    <option value="250">250 g</option>
+                    <option value="500">500 g</option>
+                    <option value="1000">1 kg</option>
+                    <option value="custom">Custom...</option>
+                  </select>
+
+                  <div class="weight-custom" style="display:none;gap:6px;align-items:center">
+                    <button type="button" class="w-dec" aria-label="decrease-weight">−</button>
+                    <input type="number" class="grams-input" min="1" step="50" value="500" aria-label="Grams" style="width:80px;padding:4px;border-radius:4px;border:1px solid #ddd;text-align:right" />
+                    <button type="button" class="w-inc" aria-label="increase-weight">+</button>
+                  </div>
+
+                  <div style="min-width:70px;text-align:right;font-size:13px;">₹<span class="weight-price">${Math.round(pricePerKg)}</span>/kg</div>
+                </div>
+                <span class="row-subtotal" aria-hidden="true"></span>
+              `;
+              row.dataset.isWeight = "true";
+              row.dataset.pricePerKg = pricePerKg;
+              row.dataset.grams = 0;
+              row.dataset.price = 0;
+
+              const weightSelect = ctrlCell.querySelector(".weight-select");
+              const customDiv = ctrlCell.querySelector(".weight-custom");
+              const gInput = ctrlCell.querySelector(".grams-input");
+              const dec = ctrlCell.querySelector(".w-dec");
+              const inc = ctrlCell.querySelector(".w-inc");
+              const subtotalSpan = ctrlCell.querySelector(".row-subtotal");
+
+              function changeWeight(g){ g = Math.max(1, Math.round(g)); row.dataset.grams = g; const pkg = parseFloat(row.dataset.pricePerKg)||0; const computed = pkg*(g/1000); row.dataset.price = computed; subtotalSpan.textContent = g>0 ? `Subtotal: ${formatINR(computed)}` : ""; updateCart(); }
+
+              weightSelect.addEventListener("change",(e)=>{ const val=e.target.value; if(val===""){ customDiv.style.display="none"; row.dataset.grams=0; row.dataset.price=0; subtotalSpan.textContent=""; updateCart(); } else if(val==="custom"){ customDiv.style.display="flex"; gInput.value = parseInt(row.dataset.grams)||500; } else { customDiv.style.display="none"; const g=parseInt(val,10)||1000; gInput.value=g; changeWeight(g); } });
+
+              dec.addEventListener("click",()=>{ const g=Math.max(1,parseInt(gInput.value||0)-50); gInput.value=g; changeWeight(g); });
+              inc.addEventListener("click",()=>{ const g=Math.max(1,parseInt(gInput.value||0)+50); gInput.value=g; changeWeight(g); });
+              gInput.addEventListener("change",(e)=>{ const g=parseInt(e.target.value||0)||1; e.target.value=Math.max(1,g); changeWeight(e.target.value); });
+
+              subtotalSpan.textContent = "";
+            } else {
+              ctrlCell.innerHTML = `
+                <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end">
+                  <div class="qty-controls" role="group" aria-label="Quantity controls">
+                    <button type="button" aria-label="decrease">−</button>
+                    <span class="qty" aria-live="polite">0</span>
+                    <button type="button" aria-label="increase">+</button>
+                  </div>
+                </div>
+                <span class="row-subtotal" aria-hidden="true"></span>
+              `;
+              const dec = ctrlCell.querySelector('button[aria-label="decrease"]');
+              const inc = ctrlCell.querySelector('button[aria-label="increase"]');
+              const qtySpan = ctrlCell.querySelector(".qty");
+              const subtotalSpan = ctrlCell.querySelector(".row-subtotal");
+
+              function updateRowSubtotalDefault(){ const qty = parseInt(qtySpan.textContent)||0; const price = parseFloat(row.dataset.price||0); subtotalSpan.textContent = qty>0 ? `Subtotal: ${formatINR(qty*price)}` : ""; }
+
+              dec.addEventListener("click", ()=>{ const q=Math.max(0,parseInt(qtySpan.textContent)-1); qtySpan.textContent=q; updateRowSubtotalDefault(); updateCart(); });
+              inc.addEventListener("click", ()=>{ const q=Math.max(0,parseInt(qtySpan.textContent)+1); qtySpan.textContent=q; updateRowSubtotalDefault(); updateCart(); });
             }
           });
         });
 
-        // update cart summary
-        function updateCart() {
-          const cartItemsDiv = document.getElementById("cartItems");
-          cartItemsDiv.innerHTML = "";
-          let total = 0;
+        function updateCart(){
+          const cartItemsDiv = document.getElementById("cartItems"); cartItemsDiv.innerHTML = ""; let total = 0;
           const rows = document.querySelectorAll(".container table tr");
-          rows.forEach((row) => {
-            if (row.querySelector("th")) return;
+          rows.forEach(row=>{
+            if(row.querySelector("th")) return;
             const cells = row.querySelectorAll("td");
-            if (cells.length < 3) return;
+            if(cells.length<3) return;
             const name = cells[0].textContent.trim();
-            const price = parseFloat(row.dataset.price || 0);
-            const qty =
-              parseInt(cells[2].querySelector(".qty").textContent) || 0;
-            if (qty > 0) {
-              const subtotal = qty * price;
-              total += subtotal;
-              const itemDiv = document.createElement("div");
-              itemDiv.className = "cart-item";
-              itemDiv.innerHTML = `<div>${name} × ${qty}</div><div>${formatINR(
-                subtotal
-              )}</div>`;
-              cartItemsDiv.appendChild(itemDiv);
+            const isWeight = row.dataset.isWeight === "true";
+            if(isWeight){
+              const grams = parseInt(row.dataset.grams||0);
+              if(grams>0){
+                const pricePerKg = parseFloat(row.dataset.pricePerKg||0);
+                const subtotal = pricePerKg*(grams/1000);
+                total += subtotal;
+                const itemDiv = document.createElement("div"); itemDiv.className="cart-item";
+                itemDiv.innerHTML = `<div>${name} — ${grams} g</div><div>${formatINR(subtotal)}</div>`;
+                cartItemsDiv.appendChild(itemDiv);
+              }
+            } else {
+              const qtySpan = cells[2].querySelector(".qty");
+              if(!qtySpan) return;
+              const qty = parseInt(qtySpan.textContent)||0;
+              const price = parseFloat(row.dataset.price||0);
+              if(qty>0){
+                const subtotal = qty*price; total += subtotal;
+                const itemDiv = document.createElement("div"); itemDiv.className="cart-item";
+                itemDiv.innerHTML = `<div>${name} × ${qty}</div><div>${formatINR(subtotal)}</div>`;
+                cartItemsDiv.appendChild(itemDiv);
+              }
             }
           });
           document.getElementById("cartTotal").textContent = formatINR(total);
-          // show/hide cart summary
-          document.getElementById("cartSummary").style.display =
-            total > 0 ? "block" : "none";
+          document.getElementById("cartSummary").style.display = total>0 ? "block":"none";
         }
 
-        // Build WhatsApp message and open it
-        function placeOrder() {
+        function placeOrder(){
           const rows = document.querySelectorAll(".container table tr");
-          let lines = [];
-          let total = 0;
-          rows.forEach((row) => {
-            if (row.querySelector("th")) return;
+          let lines = []; let total = 0;
+          rows.forEach(row=>{
+            if(row.querySelector("th")) return;
             const cells = row.querySelectorAll("td");
-            if (cells.length < 3) return;
+            if(cells.length<3) return;
             const name = cells[0].textContent.trim();
-            const price = parseFloat(row.dataset.price || 0);
-            const qty =
-              parseInt(cells[2].querySelector(".qty").textContent) || 0;
-            if (qty > 0) {
-              const subtotal = price * qty;
-              total += subtotal;
-              lines.push(`${name} x${qty} = ₹${subtotal.toFixed(0)}`);
+            const isWeight = row.dataset.isWeight === "true";
+            if(isWeight){
+              const grams = parseInt(row.dataset.grams||0);
+              if(grams<=0) return;
+              const pricePerKg = parseFloat(row.dataset.pricePerKg||0);
+              const subtotal = pricePerKg*(grams/1000); total += subtotal;
+              lines.push(`${name} — ${grams} g = ₹${Math.round(subtotal)}`);
+            } else {
+              const qtySpan = cells[2].querySelector(".qty");
+              if(!qtySpan) return;
+              const qty = parseInt(qtySpan.textContent)||0;
+              const price = parseFloat(row.dataset.price||0);
+              if(qty>0){ const subtotal = qty*price; total += subtotal; lines.push(`${name} x${qty} = ₹${Math.round(subtotal)}`); }
             }
           });
-          if (lines.length === 0) {
-            alert("No items selected. Please add items to place an order.");
-            return;
-          }
-          // message header — include timestamp for clarity
-          const now = new Date();
-          const timeStr = now.toLocaleString();
-          let message = `Order from नैवेद्य sweets\nTime: ${timeStr}\n\nItems:\n`;
-          message += lines.join("\n");
-          message += `\n\nTotal: ₹${total.toFixed(
-            0
-          )}\n\nPlease confirm availability and estimated pickup/delivery time.`;
-          const waLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
-            message
-          )}`;
-          // open WhatsApp in new tab/window
-          window.open(waLink, "_blank");
+          if(lines.length===0){ alert("No items selected. Please add items to place an order."); return; }
+          const now = new Date(); const timeStr = now.toLocaleString();
+          let message = `Order from नैवेद्य sweets\nTime: ${timeStr}\n\nItems:\n`; message += lines.join("\n");
+          message += `\n\nTotal: ₹${Math.round(total)}\n\nPlease confirm availability and estimated pickup/delivery time.`;
+          const waLink = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`; window.open(waLink,"_blank");
         }
 
-        // wire up place order buttons
-        document
-          .getElementById("placeOrderButton")
-          .addEventListener("click", placeOrder);
-        document
-          .getElementById("placeOrderMobile")
-          .addEventListener("click", placeOrder);
+        const placeBtn = document.getElementById("placeOrderButton"); if(placeBtn) placeBtn.addEventListener("click", placeOrder);
+        const placeMobile = document.getElementById("placeOrderMobile"); if(placeMobile) placeMobile.addEventListener("click", placeOrder);
 
-        // initial cart update
         updateCart();
 
-        // Optional: keyboard accessibility (arrow up/down to increase/decrease when focus on qty)
-        document.addEventListener("keydown", (e) => {
-          const active = document.activeElement;
-          if (!active) return;
-          if (active.classList.contains("qty")) {
-            if (e.key === "ArrowUp" || e.key === "+") {
-              active.textContent = Math.max(
-                0,
-                parseInt(active.textContent) + 1
-              );
-              updateCart();
-              e.preventDefault();
-            } else if (e.key === "ArrowDown" || e.key === "-") {
-              active.textContent = Math.max(
-                0,
-                parseInt(active.textContent) - 1
-              );
-              updateCart();
-              e.preventDefault();
-            }
-          }
-        });
+        document.addEventListener("keydown",(e)=>{ const active = document.activeElement; if(!active) return; if(active.classList && active.classList.contains("qty")){ if(e.key==="ArrowUp"||e.key==="+"){ active.textContent = Math.max(0,parseInt(active.textContent)+1); updateCart(); e.preventDefault(); } else if(e.key==="ArrowDown"||e.key==="-"){ active.textContent = Math.max(0,parseInt(active.textContent)-1); updateCart(); e.preventDefault(); } } });
       })();
     </script>
   </body>
